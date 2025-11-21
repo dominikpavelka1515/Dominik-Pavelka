@@ -1,3 +1,6 @@
+# Vytvoří seznam ze zkopírovaného seznamu
+models = ["Chat GPT", "Claude", "Bard", "Gemini"]
+
 kamiony = [
     "Scania R500",
     "Scania S730",
@@ -21,4 +24,14 @@ kamiony = [
     "Mack Anthem"
 ]
 
+# Přidám do listu další položku
+kamiony.append("Iveco X-Way 600")
+
+# Odstraní z listu první prvek
+kamiony.pop(0)
+
+# Vypíše délku seznamu
+print(f"Délka seznamu: {len(kamiony)}")
+
+# Vypíše celý seznam
 print(kamiony)
