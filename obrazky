@@ -1,63 +1,46 @@
-import networkx as nx
-import matplotlib.pyplot as plt
+import turtle
 
-# ============================
-# 20 autobusových linek v Praze
-# ============================
-bus_lines = [
-    { "line": "100", "route": "Zličín ↔ Dejvická" },
-    { "line": "110", "route": "Vršní ↔ Spořilov" },
-    { "line": "134", "route": "Spořilov ↔ Palmovka" },
-    { "line": "154", "route": "Černý Most ↔ Záběhlice" },
-    { "line": "177", "route": "Vysočany ↔ Háje" },
-    { "line": "192", "route": "Petřiny ↔ Letňany" },
-    { "line": "200", "route": "Prosek ↔ Řepy" },
-    { "line": "217", "route": "Nádraží Holešovice ↔ Modřany" },
-    { "line": "225", "route": "Nádraží Veleslavín ↔ Vokovice" },
-    { "line": "254", "route": "Černý Most ↔ Letňany" },
-    { "line": "262", "route": "Kačerov ↔ Hermanice" },
-    { "line": "268", "route": "Zličín ↔ Řepy" },
-    { "line": "270", "route": "Sídliště Ďáblice ↔ Černý Most" },
-    { "line": "290", "route": "Prosek ↔ Strašnice" },
-    { "line": "303", "route": "Trojská ↔ Dejvice" },
-    { "line": "325", "route": "Nádraží Holešovice ↔ Suchdol" },
-    { "line": "345", "route": "Letňany ↔ Prosek" },
-    { "line": "369", "route": "Modřany ↔ Kamýk" },
-    { "line": "399", "route": "Zličín ↔ Stodůlky" },
-    { "line": "410", "route": "Bohnice ↔ Vokovice" }
-]
+def draw_neon_spiral():
+    """
+    Funkce vykreslí neonovou spirálu na černém pozadí.
+    """
+    # Nastavení obrazovky
+    screen = turtle.Screen()
+    screen.setup(width=800, height=800)
+    screen.bgcolor('black')
+    screen.title("Neon Turtle Spiral")
 
-# ============================
-# Vytvoření grafu linek
-# ============================
-G = nx.Graph()
+    # Nastavení želvy
+    t = turtle.Turtle()
+    t.speed(0)  # 0 = nejrychlejší možná
+    t.hideturtle() # Schová kurzor želvy, aby nerušil
 
-# Přidání uzlů
-for bus in bus_lines:
-    G.add_node(bus["line"], route=bus["route"])
+    # Paleta barev (Cyan vibe)
+    # Používáme hex kódy, protože jsou univerzální
+    colors = ['cyan', '#00C8FF', 'white']
 
-# Propojení linek pokud sdílí zastávku (jednoduchá detekce podle textu)
-for i in range(len(bus_lines)):
-    for j in range(i + 1, len(bus_lines)):
-        r1 = bus_lines[i]["route"]
-        r2 = bus_lines[j]["route"]
-        
-        # Podmínka – sdílí část názvu -> spojení
-        if any(stop in r2 for stop in r1.split()):
-            G.add_edge(bus_lines[i]["line"], bus_lines[j]["line"])
+    # Hlavní smyčka vykreslování
+    try:
+        for i in range(300):
+            # 1. Výběr barvy
+            t.color(colors[i % 3])
+            
+            # 2. Nastavení tloušťky (puls efekt)
+            t.width(i % 9 + 1)
+            
+            # 3. Pohyb
+            t.forward(i * 2)
+            
+            # 4. Rotace
+            # 58 stupňů vytváří ten specifický spirálový vzor
+            t.left(58) 
+            
+    except turtle.Terminator:
+        # Ošetření chyby, pokud uživatel zavře okno během kreslení
+        pass
 
-# ============================
-# Vykreslení grafu
-# ============================
-plt.figure(figsize=(10, 10))
-nx.draw(
-    G,
-    with_labels=True,
-    node_size=1200,
-    node_color="#4c8bf5",
-    font_size=10,
-    font_weight="bold"
-)
+    # Udrží okno otevřené, dokud na něj neklikneš
+    screen.exitonclick()
 
-plt.title("Graf autobusových linek v Praze")
-plt.show()
+if __name__ == "__main__":
+    draw_neon_spiral()
