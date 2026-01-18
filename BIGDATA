@@ -1,0 +1,110 @@
+import matplotlib.pyplot as plt
+import numpy as np
+
+# ============================
+# 1. DATA (Tvůj seznam + DATA)
+# ============================
+bus_lines_data = [
+    { "line": "100", "route": "Zličín ↔ Dejvická", "delka_km": 18.5, "pocet_zastavek": 15 },
+    { "line": "110", "route": "Vršní ↔ Spořilov", "delka_km": 12.3, "pocet_zastavek": 22 },
+    { "line": "134", "route": "Spořilov ↔ Palmovka", "delka_km": 15.1, "pocet_zastavek": 28 },
+    { "line": "154", "route": "Černý Most ↔ Záběhlice", "delka_km": 21.0, "pocet_zastavek": 35 },
+    { "line": "177", "route": "Vysočany ↔ Háje", "delka_km": 25.5, "pocet_zastavek": 42 },
+    { "line": "192", "route": "Petřiny ↔ Letňany", "delka_km": 14.8, "pocet_zastavek": 26 },
+    { "line": "200", "route": "Prosek ↔ Řepy", "delka_km": 19.2, "pocet_zastavek": 31 },
+    { "line": "217", "route": "Nádraží Holešovice ↔ Modřany", "delka_km": 16.5, "pocet_zastavek": 29 },
+    { "line": "225", "route": "Nádraží Veleslavín ↔ Vokovice", "delka_km": 8.4,  "pocet_zastavek": 18 },
+    { "line": "254", "route": "Černý Most ↔ Letňany", "delka_km": 11.2, "pocet_zastavek": 20 },
+    { "line": "262", "route": "Kačerov ↔ Hermanice", "delka_km": 9.8,  "pocet_zastavek": 16 },
+    { "line": "268", "route": "Zličín ↔ Řepy", "delka_km": 7.5,  "pocet_zastavek": 14 },
+    { "line": "270", "route": "Sídliště Ďáblice ↔ Černý Most", "delka_km": 13.6, "pocet_zastavek": 24 },
+    { "line": "290", "route": "Prosek ↔ Strašnice", "delka_km": 17.1, "pocet_zastavek": 30 },
+    { "line": "303", "route": "Trojská ↔ Dejvice", "delka_km": 6.2,  "pocet_zastavek": 12 },
+    { "line": "325", "route": "Nádraží Holešovice ↔ Suchdol", "delka_km": 10.5, "pocet_zastavek": 19 },
+    { "line": "345", "route": "Letňany ↔ Prosek", "delka_km": 5.1,  "pocet_zastavek": 10 },
+    { "line": "369", "route": "Modřany ↔ Kamýk", "delka_km": 8.9,  "pocet_zastavek": 17 },
+    { "line": "399", "route": "Zličín ↔ Stodůlky", "delka_km": 4.5,  "pocet_zastavek": 9 },
+    { "line": "410", "route": "Bohnice ↔ Vokovice", "delka_km": 14.2, "pocet_zastavek": 25 }
+]
+
+# ============================
+# 2. VÝPOČTY PRO TEXT (Dynamická analýza)
+# ============================
+pocet_linek = len(bus_lines_data)
+delky = [b['delka_km'] for b in bus_lines_data]
+prumer_delka = np.mean(delky)
+nejdelsi_linka = max(bus_lines_data, key=lambda x: x['delka_km'])
+pocet_nad_20 = len([d for d in delky if d > 20])
+
+# Sestavení textu ve stylu "Řeky"
+analyticky_text = (
+    f"Analýza {pocet_linek} autobusových linek v Praze pomocí Pythonu ukázala průměrnou délku "
+    f"{prumer_delka:.1f} km a délkovou dominanci linky {nejdelsi_linka['line']} ({nejdelsi_linka['delka_km']} km). "
+    f"Histogram odhaluje, že většina tras měří 5–15 km, přičemž pouze {pocet_nad_20} hlavní tepny "
+    f"přesahují 20 km, což dokládá soustředění sítě do několika páteřních spojů. "
+    f"Závěrem lze říci, že pražská síť v tomto vzorku sestává z mnoha kratších obslužných linek "
+    f"napájejících pár dlouhých tangenciálních tras. Počet zastávek přitom silně koreluje s celkovou délkou linky."
+)
+
+# Výpis do konzole (abys si to mohl zkopírovat)
+print("\n" + "="*80)
+print("VYGENEROVANÝ TEXT:")
+print("="*80)
+print(analyticky_text)
+print("="*80 + "\n")
+
+# ============================
+# 3. VYKRESLENÍ GRAFŮ
+# ============================
+fig, axs = plt.subplots(2, 2, figsize=(16, 13)) # Zvětšena výška pro text dole
+fig.suptitle('Statistická analýza vybraných linek MHD', fontsize=20, fontweight='bold')
+
+# Barvy
+c_main = '#E74C3C' 
+c_sec = '#3498DB'
+c_tert = '#F1C40F'
+
+# --- Graf 1: Histogram ---
+axs[0, 0].hist(delky, bins=8, color=c_sec, edgecolor='black', alpha=0.8)
+axs[0, 0].set_title('Histogram délek linek', fontweight='bold')
+axs[0, 0].set_ylabel('Počet vozů')
+axs[0, 0].set_xlabel('Délka (km)')
+
+# --- Graf 2: Box Plot ---
+mestske = [b['delka_km'] for b in bus_lines_data if int(b['line']) < 300]
+primestske = [b['delka_km'] for b in bus_lines_data if int(b['line']) >= 300]
+bplot = axs[0, 1].boxplot([mestske, primestske], patch_artist=True, labels=['Městské', 'Příměstské'])
+for patch, color in zip(bplot['boxes'], [c_main, c_sec]):
+    patch.set_facecolor(color)
+axs[0, 1].set_title('Box Plot - Rozptyl délek', fontweight='bold')
+axs[0, 1].set_ylabel('Délka (km)')
+
+# --- Graf 3: Top 10 ---
+sorted_data = sorted(bus_lines_data, key=lambda x: x['delka_km'], reverse=True)[:10]
+axs[1, 0].barh([b['line'] for b in sorted_data], [b['delka_km'] for b in sorted_data], color=c_main, edgecolor='black')
+axs[1, 0].invert_yaxis()
+axs[1, 0].set_title('TOP 10 Nejdelších linek', fontweight='bold')
+axs[1, 0].set_xlabel('Délka (km)')
+
+# --- Graf 4: Koláč ---
+kratke = len([b for b in bus_lines_data if b['pocet_zastavek'] < 15])
+stredni = len([b for b in bus_lines_data if 15 <= b['pocet_zastavek'] < 25])
+dlouhe = len([b for b in bus_lines_data if b['pocet_zastavek'] >= 25])
+axs[1, 1].pie([kratke, stredni, dlouhe], labels=['Krátké', 'Střední', 'Dlouhé'], autopct='%1.1f%%', colors=[c_sec, c_tert, c_main], explode=(0,0,0.05))
+axs[1, 1].set_title('Kategorie dle počtu zastávek', fontweight='bold')
+
+# ============================
+# 4. VLOŽENÍ TEXTU DO OBRÁZKU
+# ============================
+# Vytvoříme textové pole na spodu obrázku
+# Parametry (x, y, text, zarovnání, velikost písma...)
+fig.text(0.5, 0.02, 
+         analyticky_text, 
+         ha='center', 
+         fontsize=12, 
+         style='italic',
+         bbox=dict(boxstyle="round,pad=1", facecolor="#f0f0f0", edgecolor="gray", alpha=0.5),
+         wrap=True)
+
+plt.tight_layout(rect=[0, 0.1, 1, 0.95]) # Úprava okrajů, aby se tam text vešel
+plt.show()
