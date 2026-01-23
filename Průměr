@@ -1,0 +1,51 @@
+def spocitej_vazeny_prumer():
+    print("--- KALKULAČKA VÁŽENÉHO PRŮMĚRU ---")
+    print("Zadávejte známky a jejich váhy. Pro ukončení a výpočet nechte pole 'Známka' prázdné a stiskněte Enter.")
+    
+    soucet_vazenych_znamek = 0
+    soucet_vah = 0
+    pocet_znamek = 0
+
+    while True:
+        # Načtení známky
+        vstup_znamka = input("\nZadejte známku: ").strip()
+        
+        # Podmínka pro ukončení cyklu
+        if vstup_znamka.lower() in ['', 'konec', 'exit']:
+            break
+            
+        # Načtení váhy
+        vstup_vaha = input("Zadejte váhu známky: ").strip()
+        
+        try:
+            # Převedení desetinné čárky na tečku a konverze na čísla
+            znamka = float(vstup_znamka.replace(',', '.'))
+            vaha = float(vstup_vaha.replace(',', '.'))
+            
+            # Pokud by někdo zadal zápornou váhu nebo známku
+            if znamka < 0 or vaha < 0:
+                print("❌ Chyba: Známka i váha musí být kladná čísla.")
+                continue
+
+            # Přičtení do celkových součtů
+            soucet_vazenych_znamek += znamka * vaha
+            soucet_vah += vaha
+            pocet_znamek += 1
+            
+            print(f"✅ Uloženo: Známka {znamka} (váha {vaha})")
+
+        except ValueError:
+            print("❌ Chyba: Zadejte prosím platná čísla (např. 1, 1.5 nebo 1,5).")
+
+    # Výpis výsledku
+    print("\n" + "="*30)
+    if soucet_vah > 0:
+        vazeny_prumer = soucet_vazenych_znamek / soucet_vah
+        print(f"Zadali jste celkem {pocet_znamek} známek.")
+        print(f"VÁŠ VÝSLEDNÝ VÁŽENÝ PRŮMĚR JE: {round(vazeny_prumer, 2)}")
+    else:
+        print("Nezadali jste žádné známky s platnou váhou.")
+    print("="*30)
+
+# Spuštění programu
+spocitej_vazeny_prumer()
