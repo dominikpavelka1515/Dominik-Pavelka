@@ -1,0 +1,121 @@
+​
+Pavelka Dominik​
+"""Modul s jednoduchým správcem čísel a rozšířenou třídou pro práci se statistikou."""
+
+from __future__ import annotations
+
+from typing import List, Optional
+
+
+class SpravceCisel:
+    """Třída pro ukládání čísel a výpočet základních statistik."""
+
+    def __init__(self) -> None:
+        self.cisla: List[float] = []
+
+    def pridej_cislo(self, cislo: float) -> None:
+        """Přidá číslo do seznamu.
+
+        Args:
+            cislo: Hodnota typu int nebo float.
+        """
+        if not isinstance(cislo, (int, float)):
+            raise ValueError("Musíš zadat číslo (int nebo float).")
+        self.cisla.append(float(cislo))
+
+    def odeber_cislo(self, cislo: float) -> bool:
+        """Odebere první výskyt čísla ze seznamu.
+
+        Returns:
+            True pokud bylo číslo úspěšně odebráno, jinak False.
+        """
+        if cislo in self.cisla:
+            self.cisla.remove(cislo)
+            return True
+        return False
+
+    def statistika(self) -> dict[str, Optional[float]]:
+        """Vrátí základní statistiky nad uloženými čísly."""
+        if not self.cisla:
+            return {
+                "pocet": 0,
+                "soucet": 0.0,
+                "prumer": None,
+                "minimum": None,
+                "maximum": None,
+            }
+
+        soucet = sum(self.cisla)
+        return {
+            "pocet": len(self.cisla),
+            "soucet": soucet,
+            "prumer": soucet / len(self.cisla),
+            "minimum": min(self.cisla),
+            "maximum": max(self.cisla),
+        }
+
+    def vypis(self) -> str:
+        """Vrací textový popis aktuálních čísel."""
+        return f"Aktuální čísla: {self.cisla}"
+
+    def vypis_statistiku(self) -> str:
+        """Vrátí hezky formátovanou statistiku."""
+        stats = self.statistika()
+        if stats["pocet"] == 0:
+            return "Ve správci nejsou žádná čísla."
+
+        return (
+            f"Počet: {stats['pocet']}, "
+            f"Součet: {stats['soucet']:.2f}, "
+            f"Průměr: {stats['prumer']:.2f}, "
+            f"Min: {stats['minimum']:.2f}, "
+            f"Max: {stats['maximum']:.2f}"
+        )
+
+
+class RozsirenySpravceCisel(SpravceCisel):
+    """Rozšířený správce čísel s dalšími funkcemi."""
+
+    def nejblizsi_cislo(self, hodnota: float) -> Optional[float]:
+        """Najde číslo nejblíže dané hodnotě."""
+        if not self.cisla:
+            return None
+        return min(self.cisla, key=lambda x: abs(x - hodnota))
+
+    def nasob_cisla(self, faktor: float) -> None:
+        """Násobí všechna čísla zadaným faktorem."""
+        self.cisla = [cislo * faktor for cislo in self.cisla]
+
+
+def main() -> None:
+    spravce1 = SpravceCisel()
+    spravce1.pridej_cislo(10)
+    spravce1.pridej_cislo(20)
+    print("Správce 1:")
+    print(spravce1.vypis())
+    print(spravce1.vypis_statistiku())
+    print()
+
+    spravce2 = SpravceCisel()
+    for cislo in [5, 15, 25]:
+        spravce2.pridej_cislo(cislo)
+    print("Správce 2:")
+    print(spravce2.vypis())
+    print(spravce2.vypis_statistiku())
+    print()
+
+    rozsireny_spravce = RozsirenySpravceCisel()
+    for cislo in [7, 14, 21]:
+        rozsireny_spravce.pridej_cislo(cislo)
+
+    print("Rozšířený správce:")
+    print(rozsireny_spravce.vypis())
+    print("Nejbližší číslo k 10:", rozsireny_spravce.nejblizsi_cislo(10))
+    rozsireny_spravce.nasob_cisla(2)
+    print("Po násobení faktorem 2:")
+    print(rozsireny_spravce.vypis())
+    print(rozsireny_spravce.vypis_statistiku())
+
+
+if __name__ == "__main__":
+    main()
